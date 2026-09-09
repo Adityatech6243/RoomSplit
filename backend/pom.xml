@@ -18,7 +18,7 @@
     <description>Roommate Expense Tracker - Phase 4 Spring Boot Backend</description>
 
     <properties>
-        <java.version>22</java.version>
+        <java.version>21</java.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
