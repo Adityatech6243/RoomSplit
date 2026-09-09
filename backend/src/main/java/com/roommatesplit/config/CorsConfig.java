@@ -20,6 +20,14 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
+        // Always allow standard local & preview/production deployment platforms
+        configuration.addAllowedOriginPattern("http://localhost:*");
+        configuration.addAllowedOriginPattern("http://127.0.0.1:*");
+        configuration.addAllowedOriginPattern("https://*.vercel.app");
+        configuration.addAllowedOriginPattern("https://*.netlify.app");
+        configuration.addAllowedOriginPattern("https://*.onrender.com");
+
+        // Also add any custom origins provided via CORS_ORIGINS
         if (allowedOrigins != null && !allowedOrigins.trim().isEmpty()) {
             List<String> origins = Arrays.stream(allowedOrigins.split(","))
                     .map(String::trim)
@@ -28,9 +36,6 @@ public class CorsConfig {
             for (String origin : origins) {  
                 configuration.addAllowedOriginPattern(origin);
             }
-        } else {
-            configuration.addAllowedOriginPattern("http://localhost:*");
-            configuration.addAllowedOriginPattern("http://127.0.0.1:*");
         }
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
