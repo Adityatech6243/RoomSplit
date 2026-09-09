@@ -1,0 +1,28 @@
+# 1. Ignore Application Properties / Secrets
+**/src/main/resources/application.properties
+**/src/main/resources/application-*.properties
+**/src/main/resources/application-*.yml
+**/src/main/resources/application.yml
+.env
+
+# 2. Maven build output and target files
+target/
+*.jar
+*.war
+*.class
+
+# 3. IDE configuration files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# 4. Logs and temporary files
+*.log
+.tools/
+
+**/src/main/resources/db/schema.sql
+
+README.md
