@@ -35,10 +35,23 @@ export const DashboardPage = () => {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-  const [expenses, setExpenses] = useState([]);
-  const [balanceData, setBalanceData] = useState({ balances: [], suggestions: [], simplifiedDebts: [] });
-  const [members, setMembers] = useState([]);
+  // ── dashboard data cache helpers ─────────────────────────────────────────
+  const cacheKey = activeRoom?.id ? `roomsplit_dash_${activeRoom.id}` : null;
+
+  const readCache = (key) => {
+    try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; } catch { return null; }
+  };
+  const writeCache = (key, data) => {
+    try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
+  };
+
+  // Initialise from cache so cards appear before API responds
+  const cached = cacheKey ? readCache(cacheKey) : null;
+
+  const [loading,     setLoading]     = useState(!cached && !!activeRoom?.id);
+  const [expenses,    setExpenses]    = useState(cached?.expenses    ?? []);
+  const [balanceData, setBalanceData] = useState(cached?.balanceData ?? { balances: [], suggestions: [], simplifiedDebts: [] });
+  const [members,     setMembers]     = useState(cached?.members     ?? []);
   const [settleModalOpen, setSettleModalOpen] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -59,22 +72,42 @@ export const DashboardPage = () => {
       setLoading(false);
       return;
     }
-    setLoading(true);
+
+    const key    = `roomsplit_dash_${activeRoom.id}`;
+    const cached = readCache(key);
+
+    // Show cached data instantly; only show spinner when nothing cached
+    if (cached) {
+      setExpenses(cached.expenses       ?? []);
+      setBalanceData(cached.balanceData ?? { balances: [], suggestions: [], simplifiedDebts: [] });
+      setMembers(cached.members         ?? []);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
+    // Always revalidate in background
     try {
       const [expRes, balRes, memRes] = await Promise.all([
         expenseService.getRoomExpenses(activeRoom.id),
         balanceService.getRoomBalances(activeRoom.id),
         roomService.getRoomMembers(activeRoom.id)
       ]);
-      setExpenses(expRes || []);
-      setBalanceData(balRes || { balances: [], suggestions: [], simplifiedDebts: [] });
-      setMembers(memRes || []);
+      const fresh = {
+        expenses:    expRes  || [],
+        balanceData: balRes  || { balances: [], suggestions: [], simplifiedDebts: [] },
+        members:     memRes  || []
+      };
+      writeCache(key, fresh);
+      setExpenses(fresh.expenses);
+      setBalanceData(fresh.balanceData);
+      setMembers(fresh.members);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
     } finally {
       setLoading(false);
     }
-  }, [activeRoom?.id]);
+  }, [activeRoom?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     loadDashboardData();
@@ -132,6 +165,14 @@ export const DashboardPage = () => {
     setSelectedSuggestion(suggestion);
     setSettleModalOpen(true);
   };
+
+  // Invalidate cache then reload (called after add expense / settle)
+  const invalidateAndReload = useCallback(() => {
+    if (activeRoom?.id) {
+      try { localStorage.removeItem(`roomsplit_dash_${activeRoom.id}`); } catch {}
+    }
+    loadDashboardData();
+  }, [activeRoom?.id, loadDashboardData]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -663,7 +704,7 @@ export const DashboardPage = () => {
         initialSuggestion={selectedSuggestion}
         members={members.length > 0 ? members : balanceData.balances}
         onSuccess={() => {
-          loadDashboardData();
+          invalidateAndReload();
           addToast('Settlement recorded successfully!', 'success');
         }}
       />
