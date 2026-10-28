@@ -1,8 +1,5 @@
-# 1. Ignore Application Properties / Secrets
-**/src/main/resources/application.properties
-**/src/main/resources/application-*.properties
-**/src/main/resources/application-*.yml
-**/src/main/resources/application.yml
+# 1. Ignore Local Secrets
+**/src/main/resources/application-local.properties
 .env
 
 # 2. Maven build output and target files
