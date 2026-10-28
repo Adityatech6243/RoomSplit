@@ -1,27 +1,27 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AppShell } from '../components/layout/AppShell';
 
-// Public Pages
+// Public Pages — eagerly loaded for fast initial paint
 import { LandingPage } from '../pages/public/LandingPage';
 import { LoginPage } from '../pages/public/LoginPage';
 import { RegisterPage } from '../pages/public/RegisterPage';
 
-// Protected Pages
-import { DashboardPage } from '../pages/dashboard/DashboardPage';
-import { ExpensesPage } from '../pages/expenses/ExpensesPage';
-import { ExpenseCreatePage } from '../pages/expenses/ExpenseCreatePage';
-import { ExpenseDetailPage } from '../pages/expenses/ExpenseDetailPage';
-import { ExpenseEditPage } from '../pages/expenses/ExpenseEditPage';
-import { BalancesPage } from '../pages/balances/BalancesPage';
-import { SettlementsPage } from '../pages/settlements/SettlementsPage';
-import { RoomMembersPage } from '../pages/room/RoomMembersPage';
-import { RoomsPage } from '../pages/room/RoomsPage';
-import { RoomSettingsPage } from '../pages/room/RoomSettingsPage';
-import { ProfilePage } from '../pages/profile/ProfilePage';
-import { MorePage } from '../pages/more/MorePage';
-import { NotFoundPage } from '../pages/system/NotFoundPage';
+// Protected Pages — lazy-loaded to reduce initial bundle
+const DashboardPage     = lazy(() => import('../pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const ExpensesPage      = lazy(() => import('../pages/expenses/ExpensesPage').then(m => ({ default: m.ExpensesPage })));
+const ExpenseCreatePage = lazy(() => import('../pages/expenses/ExpenseCreatePage').then(m => ({ default: m.ExpenseCreatePage })));
+const ExpenseDetailPage = lazy(() => import('../pages/expenses/ExpenseDetailPage').then(m => ({ default: m.ExpenseDetailPage })));
+const ExpenseEditPage   = lazy(() => import('../pages/expenses/ExpenseEditPage').then(m => ({ default: m.ExpenseEditPage })));
+const BalancesPage      = lazy(() => import('../pages/balances/BalancesPage').then(m => ({ default: m.BalancesPage })));
+const SettlementsPage   = lazy(() => import('../pages/settlements/SettlementsPage').then(m => ({ default: m.SettlementsPage })));
+const RoomMembersPage   = lazy(() => import('../pages/room/RoomMembersPage').then(m => ({ default: m.RoomMembersPage })));
+const RoomsPage         = lazy(() => import('../pages/room/RoomsPage').then(m => ({ default: m.RoomsPage })));
+const RoomSettingsPage  = lazy(() => import('../pages/room/RoomSettingsPage').then(m => ({ default: m.RoomSettingsPage })));
+const ProfilePage       = lazy(() => import('../pages/profile/ProfilePage').then(m => ({ default: m.ProfilePage })));
+const MorePage          = lazy(() => import('../pages/more/MorePage').then(m => ({ default: m.MorePage })));
+const NotFoundPage      = lazy(() => import('../pages/system/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export const AppRoutes = () => {
   return (
@@ -41,7 +41,9 @@ export const AppRoutes = () => {
       <Route
         element={
           <ProtectedRoute>
-            <AppShell />
+            <Suspense fallback={<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontSize:'1rem',color:'#888'}}>Loading…</div>}>
+              <AppShell />
+            </Suspense>
           </ProtectedRoute>
         }
       >
