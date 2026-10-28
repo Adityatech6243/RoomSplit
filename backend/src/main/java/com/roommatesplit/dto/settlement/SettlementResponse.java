@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 public class SettlementResponse {
 
-    private Long id;
-    private Long roomId;
+    private String id;
+    private String roomId;
     private UserResponse paidBy;
     private UserResponse paidTo;
     private BigDecimal amount;
@@ -22,7 +22,7 @@ public class SettlementResponse {
     public SettlementResponse() {
     }
 
-    public SettlementResponse(Long id, Long roomId, UserResponse paidBy, UserResponse paidTo,
+    public SettlementResponse(String id, String roomId, UserResponse paidBy, UserResponse paidTo,
                               BigDecimal amount, SettlementStatus status, String paymentMethod,
                               String notes, LocalDateTime settledAt, LocalDateTime createdAt) {
         this.id = id;
@@ -41,7 +41,7 @@ public class SettlementResponse {
         if (settlement == null) return null;
         return new SettlementResponse(
             settlement.getId(),
-            settlement.getRoom() != null ? settlement.getRoom().getId() : null,
+            settlement.getRoomId(),
             UserResponse.fromEntity(settlement.getPaidBy()),
             UserResponse.fromEntity(settlement.getPaidTo()),
             settlement.getAmount(),
@@ -54,19 +54,19 @@ public class SettlementResponse {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getRoomId() {
+    public String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 

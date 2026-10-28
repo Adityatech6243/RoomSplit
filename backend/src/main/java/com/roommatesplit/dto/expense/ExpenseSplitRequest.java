@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class ExpenseSplitRequest {
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private String userId;
 
     @NotNull(message = "Share amount is required")
     @PositiveOrZero(message = "Share amount must be non-negative")
@@ -16,16 +16,16 @@ public class ExpenseSplitRequest {
     public ExpenseSplitRequest() {
     }
 
-    public ExpenseSplitRequest(Long userId, BigDecimal shareAmount) {
+    public ExpenseSplitRequest(String userId, BigDecimal shareAmount) {
         this.userId = userId;
         this.shareAmount = shareAmount;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

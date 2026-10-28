@@ -22,8 +22,8 @@ export const settlementService = {
 
   async createSettlement(settlementData) {
     const response = await api.post('/settlements', {
-      roomId: Number(settlementData.roomId),
-      paidTo: Number(settlementData.paidTo || settlementData.toUserId),
+      roomId: settlementData.roomId,
+      paidTo: settlementData.paidTo || settlementData.toUserId,
       amount: Number(settlementData.amount),
       paymentMethod: settlementData.paymentMethod || 'CASH',
       notes: settlementData.notes ? settlementData.notes.trim() : null

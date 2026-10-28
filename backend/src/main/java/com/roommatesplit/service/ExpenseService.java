@@ -50,7 +50,7 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseResponse createExpense(Long currentUserId, CreateExpenseRequest request) {
+    public ExpenseResponse createExpense(String currentUserId, CreateExpenseRequest request) {
         // Validate active membership
         if (!roomMemberRepository.existsByRoomIdAndUserId(request.getRoomId(), currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
@@ -99,11 +99,11 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public ExpenseResponse getExpense(Long currentUserId, Long expenseId) {
+    public ExpenseResponse getExpense(String currentUserId, String expenseId) {
         Expense expense = expenseRepository.findById(expenseId)
             .orElseThrow(() -> new ResourceNotFoundException("Expense not found with id: " + expenseId));
 
-        if (!roomMemberRepository.existsByRoomIdAndUserId(expense.getRoom().getId(), currentUserId)) {
+        if (!roomMemberRepository.existsByRoomIdAndUserId(expense.getRoomId(), currentUserId)) {
             throw new ForbiddenException("You do not have access to view this expense");
         }
 
@@ -116,7 +116,7 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public List<ExpenseResponse> getRoomExpenses(Long currentUserId, Long roomId, ExpenseCategory category, Long paidById) {
+    public List<ExpenseResponse> getRoomExpenses(String currentUserId, String roomId, ExpenseCategory category, String paidById) {
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
         }
@@ -143,11 +143,16 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseResponse updateExpense(Long currentUserId, Long expenseId, UpdateExpenseRequest request) {
+    public ExpenseResponse updateExpense(String currentUserId, String expenseId, UpdateExpenseRequest request) {
         Expense expense = expenseRepository.findById(expenseId)
             .orElseThrow(() -> new ResourceNotFoundException("Expense not found with id: " + expenseId));
 
-        if (!expense.getPaidBy().getId().equals(currentUserId)) {
+        String paidByUserId = expense.getPaidById();
+        if (paidByUserId == null && expense.getPaidBy() != null) {
+            paidByUserId = expense.getPaidBy().getId();
+        }
+
+        if (paidByUserId != null && !paidByUserId.equals(currentUserId)) {
             throw new ForbiddenException("Only the expense creator can edit this expense");
         }
 
@@ -172,7 +177,7 @@ public class ExpenseService {
 
         if (request.getSplits() != null && !request.getSplits().isEmpty()) {
             BigDecimal effectiveAmount = request.getAmount() != null ? request.getAmount() : expense.getAmount();
-            validateSplits(expense.getRoom().getId(), effectiveAmount, request.getSplits());
+            validateSplits(expense.getRoomId(), effectiveAmount, request.getSplits());
 
             expenseSplitRepository.deleteAllByExpenseId(expense.getId());
 
@@ -195,18 +200,23 @@ public class ExpenseService {
         Expense savedExpense = expenseRepository.save(expense);
         List<ExpenseSplit> splits = expenseSplitRepository.findAllByExpenseIdWithUser(expense.getId());
         List<ExpenseSplitResponse> splitResponses = splits.stream()
-            .map(ExpenseSplitResponse::fromEntity)
-            .collect(Collectors.toList());
+                .map(ExpenseSplitResponse::fromEntity)
+                .collect(Collectors.toList());
 
         return ExpenseResponse.fromEntity(savedExpense, splitResponses);
     }
 
     @Transactional
-    public void deleteExpense(Long currentUserId, Long expenseId) {
+    public void deleteExpense(String currentUserId, String expenseId) {
         Expense expense = expenseRepository.findById(expenseId)
             .orElseThrow(() -> new ResourceNotFoundException("Expense not found with id: " + expenseId));
 
-        if (!expense.getPaidBy().getId().equals(currentUserId)) {
+        String paidByUserId = expense.getPaidById();
+        if (paidByUserId == null && expense.getPaidBy() != null) {
+            paidByUserId = expense.getPaidBy().getId();
+        }
+
+        if (paidByUserId != null && !paidByUserId.equals(currentUserId)) {
             throw new ForbiddenException("Only the expense creator can delete this expense");
         }
 
@@ -214,7 +224,7 @@ public class ExpenseService {
         expenseRepository.deleteById(expenseId);
     }
 
-    private void validateSplits(Long roomId, BigDecimal totalAmount, List<ExpenseSplitRequest> splits) {
+    private void validateSplits(String roomId, BigDecimal totalAmount, List<ExpenseSplitRequest> splits) {
         if (splits == null || splits.isEmpty()) {
             throw new BadRequestException("At least one split participant is required");
         }

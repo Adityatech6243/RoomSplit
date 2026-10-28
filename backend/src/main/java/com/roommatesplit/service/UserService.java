@@ -18,14 +18,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getUserProfile(Long userId) {
+    public UserResponse getUserProfile(String userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         return UserResponse.fromEntity(user);
     }
 
     @Transactional
-    public UserResponse updateProfile(Long userId, UpdateProfileRequest request) {
+    public UserResponse updateProfile(String userId, UpdateProfileRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 

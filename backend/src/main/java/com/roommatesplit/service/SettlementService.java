@@ -3,7 +3,6 @@ package com.roommatesplit.service;
 import com.roommatesplit.dto.settlement.CreateSettlementRequest;
 import com.roommatesplit.dto.settlement.SettlementResponse;
 import com.roommatesplit.entity.Room;
-import com.roommatesplit.entity.RoomMember;
 import com.roommatesplit.entity.Settlement;
 import com.roommatesplit.entity.User;
 import com.roommatesplit.enums.SettlementStatus;
@@ -42,8 +41,8 @@ public class SettlementService {
     }
 
     @Transactional
-    public SettlementResponse createSettlement(Long currentUserId, CreateSettlementRequest request) {
-        Long roomId = request.getRoomId();
+    public SettlementResponse createSettlement(String currentUserId, CreateSettlementRequest request) {
+        String roomId = request.getRoomId();
 
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
@@ -81,7 +80,7 @@ public class SettlementService {
     }
 
     @Transactional(readOnly = true)
-    public List<SettlementResponse> getRoomSettlements(Long currentUserId, Long roomId) {
+    public List<SettlementResponse> getRoomSettlements(String currentUserId, String roomId) {
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
         }
@@ -93,11 +92,15 @@ public class SettlementService {
     }
 
     @Transactional
-    public SettlementResponse markSettled(Long currentUserId, Long settlementId) {
+    public SettlementResponse markSettled(String currentUserId, String settlementId) {
         Settlement settlement = settlementRepository.findById(settlementId)
             .orElseThrow(() -> new ResourceNotFoundException("Settlement not found with id: " + settlementId));
 
-        Long roomId = settlement.getRoom().getId();
+        String roomId = settlement.getRoomId();
+        if (roomId == null && settlement.getRoom() != null) {
+            roomId = settlement.getRoom().getId();
+        }
+
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
         }

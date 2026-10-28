@@ -23,7 +23,7 @@ public class BalanceController {
     @GetMapping("/{roomId}/balances")
     public ResponseEntity<RoomBalanceResponse> getRoomBalances(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId
+        @PathVariable String roomId
     ) {
         RoomBalanceResponse response = balanceService.getRoomBalances(userPrincipal.getId(), roomId);
         return ResponseEntity.ok(response);

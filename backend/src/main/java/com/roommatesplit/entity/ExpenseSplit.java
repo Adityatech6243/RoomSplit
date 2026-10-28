@@ -1,29 +1,32 @@
 package com.roommatesplit.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "expense_splits")
+@Document(collection = "expense_splits")
 public class ExpenseSplit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_id", nullable = false)
+    private String expenseId;
+
+    private String roomId;
+
+    private String userId;
+
+    @DocumentReference(lazy = true)
     private Expense expense;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @DocumentReference(lazy = true)
     private User user;
 
-    @Column(name = "share_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal shareAmount;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public ExpenseSplit() {
@@ -32,23 +35,44 @@ public class ExpenseSplit {
     public ExpenseSplit(Expense expense, User user, BigDecimal shareAmount) {
         this.expense = expense;
         this.user = user;
+        this.expenseId = expense != null ? expense.getId() : null;
+        this.roomId = expense != null ? expense.getRoomId() : null;
+        this.userId = user != null ? user.getId() : null;
         this.shareAmount = shareAmount;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getExpenseId() {
+        return expenseId != null ? expenseId : (expense != null ? expense.getId() : null);
+    }
+
+    public void setExpenseId(String expenseId) {
+        this.expenseId = expenseId;
+    }
+
+    public String getRoomId() {
+        return roomId != null ? roomId : (expense != null ? expense.getRoomId() : null);
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
+    public String getUserId() {
+        return userId != null ? userId : (user != null ? user.getId() : null);
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Expense getExpense() {
@@ -57,6 +81,10 @@ public class ExpenseSplit {
 
     public void setExpense(Expense expense) {
         this.expense = expense;
+        if (expense != null) {
+            this.expenseId = expense.getId();
+            this.roomId = expense.getRoomId();
+        }
     }
 
     public User getUser() {
@@ -65,6 +93,9 @@ public class ExpenseSplit {
 
     public void setUser(User user) {
         this.user = user;
+        if (user != null) {
+            this.userId = user.getId();
+        }
     }
 
     public BigDecimal getShareAmount() {

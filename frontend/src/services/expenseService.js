@@ -60,7 +60,7 @@ export const expenseService = {
     // Supports createExpense(roomId, data) OR createExpense(data)
     const payload = arg2 ? { ...arg2, roomId: arg1 } : arg1;
     const splitsPayload = (payload.splits || []).map(s => ({
-      userId: Number(s.userId),
+      userId: s.userId,
       shareAmount: Number(s.shareAmount !== undefined ? s.shareAmount : s.amount)
     }));
 
@@ -71,7 +71,7 @@ export const expenseService = {
     const description = payload.description ? payload.description.trim() : null;
 
     const response = await api.post('/expenses', {
-      roomId: Number(payload.roomId),
+      roomId: payload.roomId,
       title,
       description,
       amount: Number(payload.amount),
@@ -86,7 +86,7 @@ export const expenseService = {
 
   async updateExpense(expenseId, expenseData) {
     const splitsPayload = expenseData.splits ? expenseData.splits.map(s => ({
-      userId: Number(s.userId),
+      userId: s.userId,
       shareAmount: Number(s.shareAmount !== undefined ? s.shareAmount : s.amount)
     })) : undefined;
 

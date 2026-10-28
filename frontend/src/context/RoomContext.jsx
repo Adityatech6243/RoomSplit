@@ -24,7 +24,7 @@ export const RoomProvider = ({ children }) => {
 
       // Restore previously saved room or select the first available
       const savedRoomId = localStorage.getItem('roomsplit_active_room_id');
-      const found = rooms.find(r => r.id === Number(savedRoomId));
+      const found = rooms.find(r => String(r.id) === String(savedRoomId));
 
       if (found) {
         setActiveRoom(found);
@@ -46,7 +46,7 @@ export const RoomProvider = ({ children }) => {
   }, [refreshRooms]);
 
   const switchRoom = useCallback((roomId) => {
-    const found = myRooms.find(r => r.id === Number(roomId));
+    const found = myRooms.find(r => String(r.id) === String(roomId));
     if (found) {
       setActiveRoom(found);
       localStorage.setItem('roomsplit_active_room_id', found.id);
@@ -55,7 +55,7 @@ export const RoomProvider = ({ children }) => {
 
   const updateActiveRoom = useCallback((updatedRoom) => {
     setActiveRoom(prev => ({ ...prev, ...updatedRoom }));
-    setMyRooms(prev => prev.map(r => r.id === updatedRoom.id ? { ...r, ...updatedRoom } : r));
+    setMyRooms(prev => prev.map(r => String(r.id) === String(updatedRoom.id) ? { ...r, ...updatedRoom } : r));
   }, []);
 
   const value = {

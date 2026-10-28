@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 public class CreateSettlementRequest {
 
     @NotNull(message = "Room ID is required")
-    private Long roomId;
+    private String roomId;
 
     @NotNull(message = "Paid To User ID is required")
-    private Long paidTo;
+    private String paidTo;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than zero")
@@ -25,7 +25,7 @@ public class CreateSettlementRequest {
     public CreateSettlementRequest() {
     }
 
-    public CreateSettlementRequest(Long roomId, Long paidTo, BigDecimal amount, String paymentMethod, String notes) {
+    public CreateSettlementRequest(String roomId, String paidTo, BigDecimal amount, String paymentMethod, String notes) {
         this.roomId = roomId;
         this.paidTo = paidTo;
         this.amount = amount;
@@ -33,19 +33,19 @@ public class CreateSettlementRequest {
         this.notes = notes;
     }
 
-    public Long getRoomId() {
+    public String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 
-    public Long getPaidTo() {
+    public String getPaidTo() {
         return paidTo;
     }
 
-    public void setPaidTo(Long paidTo) {
+    public void setPaidTo(String paidTo) {
         this.paidTo = paidTo;
     }
 

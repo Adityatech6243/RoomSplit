@@ -37,11 +37,11 @@ public class BalanceService {
     }
 
     private static class DebtNode {
-        Long userId;
+        String userId;
         String name;
         BigDecimal amount;
 
-        DebtNode(Long userId, String name, BigDecimal amount) {
+        DebtNode(String userId, String name, BigDecimal amount) {
             this.userId = userId;
             this.name = name;
             this.amount = amount;
@@ -49,7 +49,7 @@ public class BalanceService {
     }
 
     @Transactional(readOnly = true)
-    public RoomBalanceResponse getRoomBalances(Long currentUserId, Long roomId) {
+    public RoomBalanceResponse getRoomBalances(String currentUserId, String roomId) {
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, currentUserId)) {
             throw new ForbiddenException("You are not an active member of this room");
         }
@@ -62,7 +62,10 @@ public class BalanceService {
 
         for (RoomMember rm : members) {
             User user = rm.getUser();
-            Long uid = user.getId();
+            String uid = rm.getUserId();
+            String userName = user != null ? user.getName() : "Unknown";
+            String userEmail = user != null ? user.getEmail() : "";
+            String userAvatar = user != null ? user.getAvatar() : null;
 
             BigDecimal totalPaid = expenseRepository.sumAmountByRoomIdAndPaidById(roomId, uid)
                 .setScale(2, RoundingMode.HALF_UP);
@@ -82,18 +85,18 @@ public class BalanceService {
 
             balanceList.add(new MemberBalanceResponse(
                 uid,
-                user.getName(),
-                user.getEmail(),
-                user.getAvatar(),
+                userName,
+                userEmail,
+                userAvatar,
                 totalPaid,
                 totalOwed,
                 netBalance
             ));
 
             if (netBalance.compareTo(BigDecimal.valueOf(0.01)) > 0) {
-                creditors.add(new DebtNode(uid, user.getName(), netBalance));
+                creditors.add(new DebtNode(uid, userName, netBalance));
             } else if (netBalance.compareTo(BigDecimal.valueOf(-0.01)) < 0) {
-                debtors.add(new DebtNode(uid, user.getName(), netBalance.negate()));
+                debtors.add(new DebtNode(uid, userName, netBalance.negate()));
             }
         }
 

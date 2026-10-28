@@ -6,14 +6,14 @@ import java.math.BigDecimal;
 
 public class ExpenseSplitResponse {
 
-    private Long id;
+    private String id;
     private UserResponse user;
     private BigDecimal shareAmount;
 
     public ExpenseSplitResponse() {
     }
 
-    public ExpenseSplitResponse(Long id, UserResponse user, BigDecimal shareAmount) {
+    public ExpenseSplitResponse(String id, UserResponse user, BigDecimal shareAmount) {
         this.id = id;
         this.user = user;
         this.shareAmount = shareAmount;
@@ -28,11 +28,11 @@ public class ExpenseSplitResponse {
         );
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -44,7 +44,7 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse createRoom(Long userId, CreateRoomRequest request) {
+    public RoomResponse createRoom(String userId, CreateRoomRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -77,7 +77,7 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse joinRoom(Long userId, JoinRoomRequest request) {
+    public RoomResponse joinRoom(String userId, JoinRoomRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -108,22 +108,24 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomResponse> getMyRooms(Long userId) {
+    public List<RoomResponse> getMyRooms(String userId) {
         List<RoomMember> memberships = roomMemberRepository.findAllByUserId(userId);
         List<RoomResponse> result = new ArrayList<>();
 
         for (RoomMember rm : memberships) {
             Room room = rm.getRoom();
-            long memberCount = roomMemberRepository.countByRoomId(room.getId());
-            BigDecimal totalExpenses = expenseRepository.sumAmountByRoomId(room.getId());
-            result.add(RoomResponse.fromEntity(room, rm.getRole(), memberCount, totalExpenses));
+            if (room != null) {
+                long memberCount = roomMemberRepository.countByRoomId(room.getId());
+                BigDecimal totalExpenses = expenseRepository.sumAmountByRoomId(room.getId());
+                result.add(RoomResponse.fromEntity(room, rm.getRole(), memberCount, totalExpenses));
+            }
         }
 
         return result;
     }
 
     @Transactional(readOnly = true)
-    public RoomResponse getRoom(Long userId, Long roomId) {
+    public RoomResponse getRoom(String userId, String roomId) {
         RoomMember membership = roomMemberRepository.findByRoomIdAndUserId(roomId, userId)
             .orElseThrow(() -> new ForbiddenException("You are not an active member of this room"));
 
@@ -135,7 +137,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomMemberResponse> getRoomMembers(Long userId, Long roomId) {
+    public List<RoomMemberResponse> getRoomMembers(String userId, String roomId) {
         if (!roomMemberRepository.existsByRoomIdAndUserId(roomId, userId)) {
             throw new ForbiddenException("You are not an active member of this room");
         }
@@ -147,7 +149,7 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponse updateRoom(Long userId, Long roomId, UpdateRoomRequest request) {
+    public RoomResponse updateRoom(String userId, String roomId, UpdateRoomRequest request) {
         RoomMember membership = roomMemberRepository.findByRoomIdAndUserId(roomId, userId)
             .orElseThrow(() -> new ForbiddenException("You are not an active member of this room"));
 
@@ -174,7 +176,7 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomMemberResponse updateMemberStatus(Long currentUserId, Long roomId, Long targetUserId, Boolean active) {
+    public RoomMemberResponse updateMemberStatus(String currentUserId, String roomId, String targetUserId, Boolean active) {
         RoomMember currentMembership = roomMemberRepository.findByRoomIdAndUserId(roomId, currentUserId)
             .orElseThrow(() -> new ForbiddenException("You are not an active member of this room"));
 
@@ -195,7 +197,7 @@ public class RoomService {
     }
 
     @Transactional
-    public void removeMember(Long currentUserId, Long roomId, Long targetUserId) {
+    public void removeMember(String currentUserId, String roomId, String targetUserId) {
         RoomMember currentMembership = roomMemberRepository.findByRoomIdAndUserId(roomId, currentUserId)
             .orElseThrow(() -> new ForbiddenException("You are not an active member of this room"));
 

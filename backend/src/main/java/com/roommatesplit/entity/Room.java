@@ -1,34 +1,31 @@
 package com.roommatesplit.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "rooms")
+@Document(collection = "rooms")
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "room_name", nullable = false, length = 100)
     private String roomName;
 
-    @Column(name = "room_code", nullable = false, unique = true, length = 10)
+    @Indexed(unique = true)
     private String roomCode;
 
-    @Column(length = 10)
     private String currency = "INR";
 
-    @Column(name = "monthly_budget", precision = 12, scale = 2)
     private BigDecimal monthlyBudget = BigDecimal.ZERO;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
+    @DocumentReference(lazy = true)
     private User createdBy;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Room() {
@@ -40,27 +37,15 @@ public class Room {
         this.currency = currency != null ? currency : "INR";
         this.monthlyBudget = monthlyBudget != null ? monthlyBudget : BigDecimal.ZERO;
         this.createdBy = createdBy;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-        if (this.currency == null) {
-            this.currency = "INR";
-        }
-        if (this.monthlyBudget == null) {
-            this.monthlyBudget = BigDecimal.ZERO;
-        }
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -85,7 +70,7 @@ public class Room {
     }
 
     public void setCurrency(String currency) {
-        this.currency = currency;
+        this.currency = currency != null ? currency : "INR";
     }
 
     public BigDecimal getMonthlyBudget() {
@@ -93,7 +78,7 @@ public class Room {
     }
 
     public void setMonthlyBudget(BigDecimal monthlyBudget) {
-        this.monthlyBudget = monthlyBudget;
+        this.monthlyBudget = monthlyBudget != null ? monthlyBudget : BigDecimal.ZERO;
     }
 
     public User getCreatedBy() {

@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 
 public class SettlementSuggestionResponse {
 
-    private Long fromUserId;
+    private String fromUserId;
     private String fromUserName;
-    private Long toUserId;
+    private String toUserId;
     private String toUserName;
     private BigDecimal amount;
 
     public SettlementSuggestionResponse() {
     }
 
-    public SettlementSuggestionResponse(Long fromUserId, String fromUserName, Long toUserId, String toUserName, BigDecimal amount) {
+    public SettlementSuggestionResponse(String fromUserId, String fromUserName, String toUserId, String toUserName, BigDecimal amount) {
         this.fromUserId = fromUserId;
         this.fromUserName = fromUserName;
         this.toUserId = toUserId;
@@ -21,11 +21,11 @@ public class SettlementSuggestionResponse {
         this.amount = amount;
     }
 
-    public Long getFromUserId() {
+    public String getFromUserId() {
         return fromUserId;
     }
 
-    public void setFromUserId(Long fromUserId) {
+    public void setFromUserId(String fromUserId) {
         this.fromUserId = fromUserId;
     }
 
@@ -37,11 +37,11 @@ public class SettlementSuggestionResponse {
         this.fromUserName = fromUserName;
     }
 
-    public Long getToUserId() {
+    public String getToUserId() {
         return toUserId;
     }
 
-    public void setToUserId(Long toUserId) {
+    public void setToUserId(String toUserId) {
         this.toUserId = toUserId;
     }
 

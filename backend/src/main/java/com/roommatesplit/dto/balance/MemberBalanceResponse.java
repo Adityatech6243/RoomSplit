@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class MemberBalanceResponse {
 
-    private Long userId;
+    private String userId;
     private String name;
     private String email;
     private String avatar;
@@ -15,7 +15,7 @@ public class MemberBalanceResponse {
     public MemberBalanceResponse() {
     }
 
-    public MemberBalanceResponse(Long userId, String name, String email, String avatar,
+    public MemberBalanceResponse(String userId, String name, String email, String avatar,
                                  BigDecimal totalPaid, BigDecimal totalOwed, BigDecimal netBalance) {
         this.userId = userId;
         this.name = name;
@@ -26,11 +26,11 @@ public class MemberBalanceResponse {
         this.netBalance = netBalance;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

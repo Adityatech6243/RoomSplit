@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class RoomMemberResponse {
 
-    private Long id;
+    private String id;
     private UserResponse user;
     private RoomRole role;
     private Boolean isActive;
@@ -16,7 +16,7 @@ public class RoomMemberResponse {
     public RoomMemberResponse() {
     }
 
-    public RoomMemberResponse(Long id, UserResponse user, RoomRole role, Boolean isActive, LocalDateTime joinedAt) {
+    public RoomMemberResponse(String id, UserResponse user, RoomRole role, Boolean isActive, LocalDateTime joinedAt) {
         this.id = id;
         this.user = user;
         this.role = role;
@@ -36,11 +36,11 @@ public class RoomMemberResponse {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

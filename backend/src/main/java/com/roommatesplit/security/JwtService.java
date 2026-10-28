@@ -54,13 +54,10 @@ public class JwtService {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Long getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
         Object userId = claims.get("userId");
-        if (userId instanceof Number) {
-            return ((Number) userId).longValue();
-        }
-        return null;
+        return userId != null ? String.valueOf(userId) : null;
     }
 
     public Date getExpirationDateFromToken(String token) {

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class RoomResponse {
 
-    private Long id;
+    private String id;
     private String roomName;
     private String roomCode;
     private String currency;
@@ -22,7 +22,7 @@ public class RoomResponse {
     public RoomResponse() {
     }
 
-    public RoomResponse(Long id, String roomName, String roomCode, String currency, BigDecimal monthlyBudget,
+    public RoomResponse(String id, String roomName, String roomCode, String currency, BigDecimal monthlyBudget,
                         UserResponse createdBy, LocalDateTime createdAt, RoomRole currentUserRole,
                         Long memberCount, BigDecimal totalExpenses) {
         this.id = id;
@@ -54,11 +54,11 @@ public class RoomResponse {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

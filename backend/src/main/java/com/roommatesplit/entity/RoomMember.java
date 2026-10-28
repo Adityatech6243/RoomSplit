@@ -1,38 +1,34 @@
 package com.roommatesplit.entity;
 
 import com.roommatesplit.enums.RoomRole;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(
-    name = "room_members",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"room_id", "user_id"})
-    }
-)
+@Document(collection = "room_members")
+@CompoundIndex(def = "{'roomId': 1, 'userId': 1}", unique = true)
 public class RoomMember {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    private String roomId;
+
+    private String userId;
+
+    @DocumentReference(lazy = true)
     private Room room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @DocumentReference(lazy = true)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
     private RoomRole role = RoomRole.MEMBER;
 
-    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @Column(name = "joined_at", nullable = false, updatable = false)
     private LocalDateTime joinedAt;
 
     public RoomMember() {
@@ -41,30 +37,36 @@ public class RoomMember {
     public RoomMember(Room room, User user, RoomRole role) {
         this.room = room;
         this.user = user;
+        this.roomId = room != null ? room.getId() : null;
+        this.userId = user != null ? user.getId() : null;
         this.role = role != null ? role : RoomRole.MEMBER;
         this.isActive = true;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.joinedAt == null) {
-            this.joinedAt = LocalDateTime.now();
-        }
-        if (this.role == null) {
-            this.role = RoomRole.MEMBER;
-        }
-        if (this.isActive == null) {
-            this.isActive = true;
-        }
+        this.joinedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRoomId() {
+        return roomId != null ? roomId : (room != null ? room.getId() : null);
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
+    public String getUserId() {
+        return userId != null ? userId : (user != null ? user.getId() : null);
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Room getRoom() {
@@ -73,6 +75,9 @@ public class RoomMember {
 
     public void setRoom(Room room) {
         this.room = room;
+        if (room != null) {
+            this.roomId = room.getId();
+        }
     }
 
     public User getUser() {
@@ -81,6 +86,9 @@ public class RoomMember {
 
     public void setUser(User user) {
         this.user = user;
+        if (user != null) {
+            this.userId = user.getId();
+        }
     }
 
     public RoomRole getRole() {

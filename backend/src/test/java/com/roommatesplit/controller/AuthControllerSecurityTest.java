@@ -61,7 +61,7 @@ class AuthControllerSecurityTest {
         request.setEmail("user@example.com");
         request.setPassword("password123");
 
-        UserResponse userResponse = new UserResponse(1L, "Test User", "user@example.com", "1234567890", null, java.time.LocalDateTime.now());
+        UserResponse userResponse = new UserResponse("1", "Test User", "user@example.com", "1234567890", null, java.time.LocalDateTime.now());
         AuthResponse authResponse = new AuthResponse("valid.jwt.token", userResponse);
 
         when(authService.login(any(LoginRequest.class))).thenReturn(authResponse);
@@ -81,7 +81,7 @@ class AuthControllerSecurityTest {
         request.setEmail("user@example.com");
         request.setPassword("password123");
 
-        UserResponse userResponse = new UserResponse(1L, "Test User", "user@example.com", "1234567890", null, java.time.LocalDateTime.now());
+        UserResponse userResponse = new UserResponse("1", "Test User", "user@example.com", "1234567890", null, java.time.LocalDateTime.now());
         AuthResponse authResponse = new AuthResponse("valid.jwt.token", userResponse);
 
         when(authService.login(any(LoginRequest.class))).thenReturn(authResponse);
@@ -120,7 +120,7 @@ class AuthControllerSecurityTest {
         request.setEmail("newuser@example.com");
         request.setPassword("securePassword123");
 
-        UserResponse userResponse = new UserResponse(2L, "New User", "newuser@example.com", null, null, java.time.LocalDateTime.now());
+        UserResponse userResponse = new UserResponse("2", "New User", "newuser@example.com", null, null, java.time.LocalDateTime.now());
         AuthResponse authResponse = new AuthResponse("token.reg.123", userResponse);
 
         when(authService.register(any(RegisterRequest.class))).thenReturn(authResponse);

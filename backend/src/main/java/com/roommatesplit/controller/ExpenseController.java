@@ -38,7 +38,7 @@ public class ExpenseController {
     @GetMapping("/expenses/{expenseId}")
     public ResponseEntity<ExpenseResponse> getExpense(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long expenseId
+        @PathVariable String expenseId
     ) {
         ExpenseResponse response = expenseService.getExpense(userPrincipal.getId(), expenseId);
         return ResponseEntity.ok(response);
@@ -47,9 +47,9 @@ public class ExpenseController {
     @GetMapping("/rooms/{roomId}/expenses")
     public ResponseEntity<List<ExpenseResponse>> getRoomExpenses(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId,
+        @PathVariable String roomId,
         @RequestParam(required = false) ExpenseCategory category,
-        @RequestParam(required = false) Long paidById
+        @RequestParam(required = false) String paidById
     ) {
         List<ExpenseResponse> expenses = expenseService.getRoomExpenses(userPrincipal.getId(), roomId, category, paidById);
         return ResponseEntity.ok(expenses);
@@ -58,7 +58,7 @@ public class ExpenseController {
     @PutMapping("/expenses/{expenseId}")
     public ResponseEntity<ExpenseResponse> updateExpense(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long expenseId,
+        @PathVariable String expenseId,
         @Valid @RequestBody UpdateExpenseRequest request
     ) {
         ExpenseResponse response = expenseService.updateExpense(userPrincipal.getId(), expenseId, request);
@@ -68,7 +68,7 @@ public class ExpenseController {
     @DeleteMapping("/expenses/{expenseId}")
     public ResponseEntity<Map<String, String>> deleteExpense(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long expenseId
+        @PathVariable String expenseId
     ) {
         expenseService.deleteExpense(userPrincipal.getId(), expenseId);
         Map<String, String> result = new HashMap<>();

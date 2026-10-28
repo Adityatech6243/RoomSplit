@@ -1,37 +1,28 @@
 package com.roommatesplit.repository;
 
-import com.roommatesplit.entity.Room;
 import com.roommatesplit.entity.RoomMember;
-import com.roommatesplit.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RoomMemberRepository extends JpaRepository<RoomMember, Long> {
+public interface RoomMemberRepository extends MongoRepository<RoomMember, String> {
 
-    Optional<RoomMember> findByRoomAndUser(Room room, User user);
+    Optional<RoomMember> findByRoomIdAndUserId(String roomId, String userId);
 
-    Optional<RoomMember> findByRoomIdAndUserId(Long roomId, Long userId);
+    boolean existsByRoomIdAndUserId(String roomId, String userId);
 
-    boolean existsByRoomAndUser(Room room, User user);
+    List<RoomMember> findAllByUserId(String userId);
 
-    boolean existsByRoomIdAndUserId(Long roomId, Long userId);
+    List<RoomMember> findAllByRoomId(String roomId);
 
-    List<RoomMember> findAllByUser(User user);
+    default List<RoomMember> findAllByRoomIdWithUser(String roomId) {
+        return findAllByRoomId(roomId);
+    }
 
-    List<RoomMember> findAllByUserId(Long userId);
+    void deleteByRoomIdAndUserId(String roomId, String userId);
 
-    @Query("SELECT rm FROM RoomMember rm JOIN FETCH rm.user WHERE rm.room.id = :roomId")
-    List<RoomMember> findAllByRoomIdWithUser(@Param("roomId") Long roomId);
-
-    List<RoomMember> findAllByRoomId(Long roomId);
-
-    void deleteByRoomIdAndUserId(Long roomId, Long userId);
-
-    long countByRoomId(Long roomId);
+    long countByRoomId(String roomId);
 }

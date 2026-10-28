@@ -2,51 +2,44 @@ package com.roommatesplit.entity;
 
 import com.roommatesplit.enums.ExpenseCategory;
 import com.roommatesplit.enums.SplitType;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "expenses")
+@Document(collection = "expenses")
 public class Expense {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    private String roomId;
+
+    @DocumentReference(lazy = true)
     private Room room;
 
-    @Column(length = 255)
     private String title;
 
-    @Column(length = 1000)
     private String description;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
     private ExpenseCategory category;
 
-    @Column(nullable = false)
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paid_by", nullable = false)
+    private String paidById;
+
+    @DocumentReference(lazy = true)
     private User paidBy;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "split_type", nullable = false, length = 20)
     private SplitType splitType = SplitType.EQUAL;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public Expense() {
@@ -54,43 +47,34 @@ public class Expense {
 
     public Expense(Room room, String title, String description, BigDecimal amount, ExpenseCategory category, LocalDate date, User paidBy, SplitType splitType) {
         this.room = room;
+        this.roomId = room != null ? room.getId() : null;
         this.title = title != null && !title.trim().isEmpty() ? title.trim() : description;
         this.description = description;
         this.amount = amount;
         this.category = category;
         this.date = date;
         this.paidBy = paidBy;
+        this.paidById = paidBy != null ? paidBy.getId() : null;
         this.splitType = splitType != null ? splitType : SplitType.EQUAL;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-        if (this.splitType == null) {
-            this.splitType = SplitType.EQUAL;
-        }
-        if (this.title == null || this.title.trim().isEmpty()) {
-            this.title = this.description;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
+        this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.title == null || this.title.trim().isEmpty()) {
-            this.title = this.description;
-        }
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRoomId() {
+        return roomId != null ? roomId : (room != null ? room.getId() : null);
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 
     public Room getRoom() {
@@ -99,10 +83,13 @@ public class Expense {
 
     public void setRoom(Room room) {
         this.room = room;
+        if (room != null) {
+            this.roomId = room.getId();
+        }
     }
 
     public String getTitle() {
-        return title != null ? title : description;
+        return title;
     }
 
     public void setTitle(String title) {
@@ -141,12 +128,23 @@ public class Expense {
         this.date = date;
     }
 
+    public String getPaidById() {
+        return paidById != null ? paidById : (paidBy != null ? paidBy.getId() : null);
+    }
+
+    public void setPaidById(String paidById) {
+        this.paidById = paidById;
+    }
+
     public User getPaidBy() {
         return paidBy;
     }
 
     public void setPaidBy(User paidBy) {
         this.paidBy = paidBy;
+        if (paidBy != null) {
+            this.paidById = paidBy.getId();
+        }
     }
 
     public SplitType getSplitType() {

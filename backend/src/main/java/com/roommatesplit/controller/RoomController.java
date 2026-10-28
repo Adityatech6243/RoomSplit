@@ -54,7 +54,7 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomResponse> getRoom(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId
+        @PathVariable String roomId
     ) {
         RoomResponse room = roomService.getRoom(userPrincipal.getId(), roomId);
         return ResponseEntity.ok(room);
@@ -63,7 +63,7 @@ public class RoomController {
     @GetMapping("/{roomId}/members")
     public ResponseEntity<List<RoomMemberResponse>> getRoomMembers(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId
+        @PathVariable String roomId
     ) {
         List<RoomMemberResponse> members = roomService.getRoomMembers(userPrincipal.getId(), roomId);
         return ResponseEntity.ok(members);
@@ -72,7 +72,7 @@ public class RoomController {
     @PutMapping("/{roomId}")
     public ResponseEntity<RoomResponse> updateRoom(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId,
+        @PathVariable String roomId,
         @Valid @RequestBody UpdateRoomRequest request
     ) {
         RoomResponse room = roomService.updateRoom(userPrincipal.getId(), roomId, request);
@@ -82,8 +82,8 @@ public class RoomController {
     @PutMapping("/{roomId}/members/{userId}/status")
     public ResponseEntity<RoomMemberResponse> updateMemberStatus(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId,
-        @PathVariable Long userId,
+        @PathVariable String roomId,
+        @PathVariable String userId,
         @RequestParam(required = false, defaultValue = "false") Boolean active
     ) {
         RoomMemberResponse response = roomService.updateMemberStatus(userPrincipal.getId(), roomId, userId, active);
@@ -93,8 +93,8 @@ public class RoomController {
     @DeleteMapping("/{roomId}/members/{userId}")
     public ResponseEntity<Map<String, String>> removeMember(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId,
-        @PathVariable Long userId
+        @PathVariable String roomId,
+        @PathVariable String userId
     ) {
         roomService.removeMember(userPrincipal.getId(), roomId, userId);
         Map<String, String> result = new HashMap<>();

@@ -1,47 +1,44 @@
 package com.roommatesplit.entity;
 
 import com.roommatesplit.enums.SettlementStatus;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "settlements")
+@Document(collection = "settlements")
 public class Settlement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    private String roomId;
+
+    @DocumentReference(lazy = true)
     private Room room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paid_by", nullable = false)
+    private String paidById;
+
+    @DocumentReference(lazy = true)
     private User paidBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paid_to", nullable = false)
+    private String paidToId;
+
+    @DocumentReference(lazy = true)
     private User paidTo;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
     private SettlementStatus status = SettlementStatus.PENDING;
 
-    @Column(name = "payment_method", length = 50)
     private String paymentMethod;
 
-    @Column(length = 255)
     private String notes;
 
-    @Column(name = "settled_at")
     private LocalDateTime settledAt;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Settlement() {
@@ -49,31 +46,33 @@ public class Settlement {
 
     public Settlement(Room room, User paidBy, User paidTo, BigDecimal amount, SettlementStatus status, String paymentMethod, String notes) {
         this.room = room;
+        this.roomId = room != null ? room.getId() : null;
         this.paidBy = paidBy;
+        this.paidById = paidBy != null ? paidBy.getId() : null;
         this.paidTo = paidTo;
+        this.paidToId = paidTo != null ? paidTo.getId() : null;
         this.amount = amount;
         this.status = status != null ? status : SettlementStatus.PENDING;
         this.paymentMethod = paymentMethod;
         this.notes = notes;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-        if (this.status == null) {
-            this.status = SettlementStatus.PENDING;
-        }
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRoomId() {
+        return roomId != null ? roomId : (room != null ? room.getId() : null);
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 
     public Room getRoom() {
@@ -82,6 +81,17 @@ public class Settlement {
 
     public void setRoom(Room room) {
         this.room = room;
+        if (room != null) {
+            this.roomId = room.getId();
+        }
+    }
+
+    public String getPaidById() {
+        return paidById != null ? paidById : (paidBy != null ? paidBy.getId() : null);
+    }
+
+    public void setPaidById(String paidById) {
+        this.paidById = paidById;
     }
 
     public User getPaidBy() {
@@ -90,6 +100,17 @@ public class Settlement {
 
     public void setPaidBy(User paidBy) {
         this.paidBy = paidBy;
+        if (paidBy != null) {
+            this.paidById = paidBy.getId();
+        }
+    }
+
+    public String getPaidToId() {
+        return paidToId != null ? paidToId : (paidTo != null ? paidTo.getId() : null);
+    }
+
+    public void setPaidToId(String paidToId) {
+        this.paidToId = paidToId;
     }
 
     public User getPaidTo() {
@@ -98,6 +119,9 @@ public class Settlement {
 
     public void setPaidTo(User paidTo) {
         this.paidTo = paidTo;
+        if (paidTo != null) {
+            this.paidToId = paidTo.getId();
+        }
     }
 
     public BigDecimal getAmount() {

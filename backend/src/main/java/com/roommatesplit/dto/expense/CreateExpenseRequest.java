@@ -14,7 +14,7 @@ import java.util.List;
 public class CreateExpenseRequest {
 
     @NotNull(message = "Room ID is required")
-    private Long roomId;
+    private String roomId;
 
     @Size(max = 255, message = "Title cannot exceed 255 characters")
     private String title;
@@ -41,7 +41,7 @@ public class CreateExpenseRequest {
     public CreateExpenseRequest() {
     }
 
-    public CreateExpenseRequest(Long roomId, String title, String description, BigDecimal amount,
+    public CreateExpenseRequest(String roomId, String title, String description, BigDecimal amount,
                                 ExpenseCategory category, LocalDate date,
                                 SplitType splitType, List<ExpenseSplitRequest> splits) {
         this.roomId = roomId;
@@ -54,11 +54,11 @@ public class CreateExpenseRequest {
         this.splits = splits;
     }
 
-    public Long getRoomId() {
+    public String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 

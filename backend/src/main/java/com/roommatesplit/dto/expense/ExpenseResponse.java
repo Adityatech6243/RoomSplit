@@ -11,8 +11,8 @@ import java.util.List;
 
 public class ExpenseResponse {
 
-    private Long id;
-    private Long roomId;
+    private String id;
+    private String roomId;
     private String title;
     private String description;
     private BigDecimal amount;
@@ -27,7 +27,7 @@ public class ExpenseResponse {
     public ExpenseResponse() {
     }
 
-    public ExpenseResponse(Long id, Long roomId, String title, String description, BigDecimal amount,
+    public ExpenseResponse(String id, String roomId, String title, String description, BigDecimal amount,
                            ExpenseCategory category, LocalDate date, UserResponse paidBy,
                            SplitType splitType, List<ExpenseSplitResponse> splits,
                            LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -49,7 +49,7 @@ public class ExpenseResponse {
         if (expense == null) return null;
         return new ExpenseResponse(
             expense.getId(),
-            expense.getRoom() != null ? expense.getRoom().getId() : null,
+            expense.getRoomId(),
             expense.getTitle(),
             expense.getDescription(),
             expense.getAmount(),
@@ -64,19 +64,19 @@ public class ExpenseResponse {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getRoomId() {
+    public String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 

@@ -34,7 +34,7 @@ public class SettlementController {
     @GetMapping("/rooms/{roomId}/settlements")
     public ResponseEntity<List<SettlementResponse>> getRoomSettlements(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long roomId
+        @PathVariable String roomId
     ) {
         List<SettlementResponse> responses = settlementService.getRoomSettlements(userPrincipal.getId(), roomId);
         return ResponseEntity.ok(responses);
@@ -43,7 +43,7 @@ public class SettlementController {
     @PutMapping("/settlements/{settlementId}/settled")
     public ResponseEntity<SettlementResponse> markSettled(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
-        @PathVariable Long settlementId
+        @PathVariable String settlementId
     ) {
         SettlementResponse response = settlementService.markSettled(userPrincipal.getId(), settlementId);
         return ResponseEntity.ok(response);

@@ -65,9 +65,9 @@ export const SettlementModal = ({
     try {
       const created = await settlementService.createSettlement({
         roomId,
-        paidTo: Number(paidToUserId),
-        paidToUserId: Number(paidToUserId),
-        toUserId: Number(paidToUserId),
+        paidTo: paidToUserId,
+        paidToUserId: paidToUserId,
+        toUserId: paidToUserId,
         amount: Number(amount),
         paymentMethod: paymentMethod || 'UPI',
         notes: note
