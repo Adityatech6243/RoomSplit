@@ -20,6 +20,4 @@ target/
 *.log
 .tools/
 
-**/src/main/resources/db/schema.sql
-
 README.md

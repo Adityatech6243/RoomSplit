@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Plus,
   ArrowRightLeft,
-  Users,
   Copy,
   Check,
   CreditCard,
@@ -14,8 +13,6 @@ import {
   ShoppingCart,
   Sparkles,
   Wifi,
-  Coffee,
-  Home,
   KeyRound,
   Utensils,
   Zap
