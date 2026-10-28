@@ -186,24 +186,11 @@ export const DashboardPage = () => {
     OTHER: '#94a3b8'
   };
 
-  if (loading || loadingRooms) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Skeleton height="30px" width="60%" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-          <Skeleton height="90px" borderRadius="var(--radius-lg)" />
-          <Skeleton height="90px" borderRadius="var(--radius-lg)" />
-          <Skeleton height="90px" borderRadius="var(--radius-lg)" />
-          <Skeleton height="90px" borderRadius="var(--radius-lg)" />
-        </div>
-        <Skeleton height="70px" borderRadius="var(--radius-lg)" />
-        <Skeleton height="140px" borderRadius="var(--radius-lg)" />
-      </div>
-    );
-  }
+  // isLoading = true while rooms or dashboard data are loading
+  const isLoading = loading || loadingRooms;
 
-  // If user has 0 rooms, show welcome onboarding cards
-  if (!activeRoom) {
+  // If user has 0 rooms AND not loading, show welcome onboarding cards
+  if (!activeRoom && !isLoading) {
     return (
       <div style={{ padding: '1rem 0' }}>
         <div className="card" style={{ textAlign: 'center', padding: '2rem 1.25rem' }}>
@@ -297,15 +284,33 @@ export const DashboardPage = () => {
 
   return (
     <div>
-      {/* 1. Header Greeting */}
+      {/* 1. Header Greeting — always rendered immediately (no loading gate) */}
       <div style={{ marginBottom: '1rem' }}>
         <h1 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)' }}>
           {getGreeting()}, {currentUser?.name?.split(' ')[0]} 👋
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', marginTop: '0.15rem' }}>
-          Here's what's happening in {activeRoom?.roomName}.
+          {isLoading ? 'Loading your flat…' : `Here's what's happening in ${activeRoom?.roomName}.`}
         </p>
       </div>
+
+      {/* While loading, show skeleton cards instead of no content */}
+      {isLoading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <Skeleton height="90px" borderRadius="var(--radius-lg)" />
+            <Skeleton height="90px" borderRadius="var(--radius-lg)" />
+            <Skeleton height="90px" borderRadius="var(--radius-lg)" />
+            <Skeleton height="90px" borderRadius="var(--radius-lg)" />
+          </div>
+          <Skeleton height="70px" borderRadius="var(--radius-lg)" />
+          <Skeleton height="140px" borderRadius="var(--radius-lg)" />
+        </div>
+      )}
+
+      {/* Rest of content — only rendered when data is ready */}
+      {!isLoading && (
+      <div>
 
       {/* 2. Top Action Buttons */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.625rem', marginBottom: '1.125rem' }}>
@@ -662,6 +667,8 @@ export const DashboardPage = () => {
           addToast('Settlement recorded successfully!', 'success');
         }}
       />
+      </div>
+      )} {/* end !isLoading */}
     </div>
   );
 };
