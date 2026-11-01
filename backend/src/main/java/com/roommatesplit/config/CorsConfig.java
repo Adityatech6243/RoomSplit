@@ -25,8 +25,7 @@ public class CorsConfig {
         configuration.addAllowedOriginPattern("http://127.0.0.1:*");
         configuration.addAllowedOriginPattern("https://*.vercel.app");
         configuration.addAllowedOriginPattern("https://frontend-six-rouge-tmg45jbav5.vercel.app");
-        configuration.addAllowedOriginPattern("https://roomsplit.com");
-        configuration.addAllowedOriginPattern("https://www.roomsplit.com");
+        configuration.addAllowedOriginPattern("https://roomsplit-expence-distributer.vercel.app");
         configuration.addAllowedOriginPattern("https://*.netlify.app");
         configuration.addAllowedOriginPattern("https://*.onrender.com");
 

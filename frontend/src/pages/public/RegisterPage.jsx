@@ -30,13 +30,18 @@ export const RegisterPage = () => {
     e.preventDefault();
     const { name, email, phone, password, confirmPassword } = formData;
 
-    if (!name.trim() || !email.trim() || !password) {
+    if (!name.trim() || !email.trim() || !password || !phone) {
       setError('Please fill in all required fields.');
       return;
     }
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters long.');
+      return;
+    }
+
+     if (phone.length < 10 && Phone[0]>6) {
+      setError('Invalid Phone Number');
       return;
     }
 
@@ -82,7 +87,7 @@ export const RegisterPage = () => {
             name="name"
             label="Full Name"
             icon={User}
-            placeholder="Aditya Patil"
+            placeholder="Enter your Name"
             value={formData.name}
             onChange={handleChange}
             required
@@ -94,7 +99,7 @@ export const RegisterPage = () => {
             label="Email Address"
             type="email"
             icon={Mail}
-            placeholder="aditya@example.com"
+            placeholder="enter Email"
             value={formData.email}
             onChange={handleChange}
             required
@@ -106,9 +111,10 @@ export const RegisterPage = () => {
             label="Phone Number (Optional)"
             type="tel"
             icon={Phone}
-            placeholder="9876543210"
+            placeholder="Enter Number"
             value={formData.phone}
             onChange={handleChange}
+            required
           />
 
           <Input

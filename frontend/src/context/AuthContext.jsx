@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(async (userData) => {
     const res = await authService.register(userData);
-    const receivedToken = res.token || 'mock-token-' + Date.now();
+    const receivedToken = res.token
     localStorage.setItem(STORAGE_TOKEN, receivedToken);
     setToken(receivedToken);
     setCurrentUser(res.user);
