@@ -69,9 +69,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(async (credentials) => {
     const res = await authService.login(credentials);
-    const receivedToken = res.token || 'mock-token-' + Date.now();
-    localStorage.setItem(STORAGE_TOKEN, receivedToken);
-    setToken(receivedToken);
+    if (!res.token) throw new Error('Login failed: no token received from server.');
+    localStorage.setItem(STORAGE_TOKEN, res.token);
+    setToken(res.token);
     setCurrentUser(res.user);
     persistUser(res.user);
     return res.user;
@@ -79,9 +79,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = useCallback(async (userData) => {
     const res = await authService.register(userData);
-    const receivedToken = res.token
-    localStorage.setItem(STORAGE_TOKEN, receivedToken);
-    setToken(receivedToken);
+    if (!res.token) throw new Error('Registration failed: no token received from server.');
+    localStorage.setItem(STORAGE_TOKEN, res.token);
+    setToken(res.token);
     setCurrentUser(res.user);
     persistUser(res.user);
     return res.user;
